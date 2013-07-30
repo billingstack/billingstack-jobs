@@ -1,0 +1,54 @@
+- builder:
+    name: checkout-integration
+    builders:
+      - shell: |
+         #!/bin/bash -xe
+         if [[ ! -e billingstack-integration ]]; then
+             git clone --recursive git://github.com/billingstack/billingstack-integration
+         else
+             cd billingstack-integration
+             git remote set-url origin git://github.com/billingstack/billingstack-integration
+             git remote update
+             git reset --hard
+             git clean -x -f
+             git checkout master
+             git reset --hard remotes/origin/master
+             git clean -x -f
+             git submodule foreach git pull origin master
+             cd ..
+         fi
+
+
+- builder:
+    name: stack-refresh
+    builders:
+      - shell: |
+         #!/bin/bash -xe
+         [ -x "/opt/billingstack/billingstack/tools/control.sh" ] && /opt/billingstack/billingstack/tools/control.sh stop
+         cd billingstack-integration
+         export CONFIG=/etc/billingstack/billingstack.conf
+         export BASE_DIR=/opt/billingstack
+         BUILD_ID=dontKillMe ./stack.sh
+
+
+- builder:
+    name: ui-helper-deps
+    builders:
+      - shell: |
+         #!/bin/bash -xe
+         tools/helper.sh install_deps
+
+- builder:
+    name: ui-helper-js-deps
+    builders:
+      - shell: |
+         #!/bin/bash -xe
+         tools/helper.sh install_ui_deps
+
+
+- builder:
+    name: ui-helper-builder
+    builders:
+      - shell: |
+         #!/bin/bash
+         tools/helper build

@@ -1,0 +1,41 @@
+- job:
+    name: demo-bs
+
+    branch: master
+    node: demo
+
+    triggers:
+      - pollscm: '*/5 * * * *'
+
+    builders:
+      - checkout-integration
+      - stack-refresh
+
+    scm:
+      - git:
+          url: 'git://github.com/stackforge/billingstack'
+          branches:
+            - 'origin/master'
+
+
+- job:
+    name: demo-ui
+
+    branch: master
+    node: demo
+
+    triggers:
+      - pollscm: '*/5 * * * *'
+
+    builders:
+      - ui-helper-deps
+      - ui-helper-js-deps
+      - shell: |
+         sed 's/localhost/demo.billingstack.org/g' -i app/js/config.js
+      - ui-helper-build
+
+    scm:
+      - git:
+          url: 'git://github.com/billingstack/billingstack-ui'
+          branches:
+            - 'origin/master'

@@ -30,9 +30,8 @@
     builders:
       - ui-helper-deps
       - ui-helper-js-deps
-      - shell: |
-         sed 's/localhost/demo.billingstack.org/g' -i app/js/config.js
-      - ui-helper-build
+      - shell: "sed 's/localhost/demo.billingstack.org/g' -i app/js/config.js"
+      - ui-helper-builder
 
     scm:
       - git:

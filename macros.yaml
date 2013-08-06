@@ -26,6 +26,11 @@
          #!/bin/bash -xe
          [ -x "/opt/billingstack/billingstack/tools/control.sh" ] && /opt/billingstack/billingstack/tools/control.sh stop
          cd billingstack-integration
+         cat >>devstack/localrc<<EOF
+         MYSQL_PASSWORD=secret
+         RABBIT_PASSWORD=secret
+         RECLONE=yes
+         EOF
          export CONFIG=/etc/billingstack/billingstack.conf
          export BASE_DIR=/opt/billingstack
          BUILD_ID=dontKillMe ./stack.sh
